@@ -1,7 +1,7 @@
 module Main where
 
-import Models.Users
-import Queries.Users
+import           Api    (app)
+import           Config (Config (..), Environment (..), makePool)
 
 main :: IO ()
 main = putStrLn "Hello"

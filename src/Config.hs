@@ -15,12 +15,16 @@ import           Database.PostgreSQL.Simple (Connection, close,
                                              connectPostgreSQL)
 import           Servant                    ((:~>) (..), ServantErr (..))
 
+--------------------------------------------------------------------------------
+
 data Environment = Test | Production
 
 data Config = Config
   { getPool :: Pool Connection
   , getEnv  :: Environment
   }
+
+--------------------------------------------------------------------------------
 
 newtype App a = App
   { runApp :: ReaderT Config (ExceptT ServantErr IO) a
@@ -29,6 +33,8 @@ newtype App a = App
 
 convertApp :: Config -> App :~> ExceptT ServantErr IO
 convertApp cfg = Nat (flip runReaderT cfg . runApp)
+
+--------------------------------------------------------------------------------
 
 getConnection :: (MonadReader Config m, MonadIO m) => m Connection
 getConnection = do

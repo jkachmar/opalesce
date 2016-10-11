@@ -1,11 +1,14 @@
 {-# LANGUAGE Arrows                #-}
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE RecordWildCards       #-}
 {-# LANGUAGE TemplateHaskell       #-}
 
 module Models.Users where
 
-import           Control.Lens
+import           Control.Lens               (makeLenses)
+import           Data.Aeson
 import           Data.Int                   (Int64)
 import           Data.Profunctor.Product.TH
 import           Data.Text
@@ -24,7 +27,7 @@ type UserId = UserId' Int64
 ---------------------------------------------------------------------------------
 
 data User' a b c = User
-  { _userId  :: a
+  { _userId   :: a
   , _userName :: b
   , _userPass :: c
   }
@@ -34,6 +37,15 @@ $(makeAdaptorAndInstance  "pUser" ''User')
 type UserColumns = User' UserIdColumn (Column PGText) (Column PGText)
 type UserInsertColumns = User' UserIdColumnMaybe (Column PGText) (Column PGText)
 type User = User' UserId Text Text
+
+instance ToJSON UserId where
+  toJSON uid = object [ "id" .= unUserId uid ]
+
+instance ToJSON User where
+  toJSON User{..} = object [ "id"       .= unUserId _userId
+                           , "username" .= _userName
+                           , "password" .= _userPass
+                           ]
 
 ---------------------------------------------------------------------------------
 

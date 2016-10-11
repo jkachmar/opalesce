@@ -17,9 +17,8 @@ library
   default-language:    Haskell2010
   ghc-options:         -Wall
   hs-source-dirs:      src
-  exposed-modules:     Config
-                     , Models.Users
-                     , Queries.Users
+  exposed-modules:     Api
+                     , Config
   build-depends:       base >= 4.7 && < 5
                      , aeson >= 0.11 && < 0.12
                      , bytestring >= 0.10 && < 0.11
@@ -35,6 +34,9 @@ library
                      , wai >= 3.2 && < 3.3
                      , wai-extra >= 3.0 && < 3.1
                      , warp >= 3.2 && < 3.3
+  other-modules:       Api.Users
+                     , Models.Users
+                     , Queries.Users
 
 executable opalesce
   default-language:    Haskell2010
