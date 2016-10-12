@@ -73,7 +73,7 @@ findUsersByNameAndIdQ uId uName = proc () -> do
 
 -- | Try to add a user, returning Left (error message) if the name exists, or
 -- Right (added user id) if there is no conflict
-addUser :: MonadIO m => Connection -> Text -> Text -> m (Either Text UserId)
+addUser :: MonadIO m => Connection -> Text -> Text -> m (Maybe UserId)
 addUser conn uName uPass =
   let userInsert = User { _userId   = UserId Nothing
                         , _userName = constant uName
@@ -83,5 +83,5 @@ addUser conn uName uPass =
   in do
     exists <- findUsersByName conn uName
     case exists of
-      Nothing -> return . Left $ "Username already exists!"
-      Just _  -> return . Right =<< (liftIO $ head <$> insertUser)
+      Just _  -> return Nothing
+      Nothing -> return . Just =<< (liftIO $ head <$> insertUser)

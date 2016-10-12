@@ -4,23 +4,31 @@
 
 module Api.Users where
 
+import           Control.Monad.IO.Class (liftIO)
 import           Data.Text
 import           Servant
 
-import           Config        (App (..), getConnection)
+import           Config                 (App (..), getConnection)
 import           Models.Users
 import           Queries.Users
 
 --------------------------------------------------------------------------------
 
-type UserApi = "users" :> Get '[JSON] [User]
-          :<|> "users" :> Capture "username" Text :> Get '[JSON] User
+type UserApi = "users"
+               :> Get '[JSON] [User]
+          :<|> "users"
+               :> Capture "username" Text
+                 :> Get '[JSON] User
+          :<|> "users" :> "add"
+               :> Capture "username" Text
+                 :> Capture "password" Text
+                   :> Get '[JSON] UserId
 
 userApi :: Proxy UserApi
 userApi = Proxy
 
 userServer :: ServerT UserApi App
-userServer = getUsers :<|> singleUserByName
+userServer = getUsers :<|> singleUserByName :<|> createUser
 
 --------------------------------------------------------------------------------
 
@@ -49,5 +57,5 @@ createUser username password = do
   conn <- getConnection
   uid <- addUser conn username password
   case uid of
-    Left _ -> throwError $ err400 { errBody = "Username already exists!" }
-    Right uid' -> return uid'
+    Nothing -> throwError $ err400 { errBody = "Username already exists!" }
+    Just uid' -> return uid'

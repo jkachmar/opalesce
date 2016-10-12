@@ -50,7 +50,7 @@ instance ToJSON User where
 ---------------------------------------------------------------------------------
 
 userTable :: Table UserInsertColumns UserColumns
-userTable = Table "user" $ pUser User
+userTable = Table "users" $ pUser User
   { _userId = pUserId . UserId $ optional "id"
   , _userName = required "username"
   , _userPass = required "password"

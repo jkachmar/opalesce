@@ -45,4 +45,4 @@ makePool :: Environment -> IO (Pool Connection)
 makePool _ = createPool (connectPostgreSQL connStr) close 1 10 1
 
 connStr :: BS.ByteString
-connStr = "host=localhost dbname=opal user=test password=test port=5432"
+connStr = "host=localhost dbname=opalesce user=test password=test port=5432"
